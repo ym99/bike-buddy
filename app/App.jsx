@@ -16,10 +16,13 @@ export default class App extends React.Component {
     this.timerHandle = setInterval(() => {
       if (testData.length > 0) {
         this.setState((prevState) => {
+          const testItem = testData.splice(0, 1)[0];
+
           const history = [...prevState.history];
           history.push({
             time: new Date(),
-            latLng: testData.splice(0, 1)[0],
+            lat: testItem.lat,
+            lng: testItem.lng,
           });
 
           return {

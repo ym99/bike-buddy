@@ -5,10 +5,8 @@ export default class Map extends React.Component {
     history: React.PropTypes.arrayOf(
       React.PropTypes.shape({
         time: React.PropTypes.instanceOf(Date).isRequired,
-        latLng: React.PropTypes.shape({
-          lat: React.PropTypes.number.isRequired,
-          lng: React.PropTypes.number.isRequired,
-        }),
+        lat: React.PropTypes.number.isRequired,
+        lng: React.PropTypes.number.isRequired,
       }),
     ),
   };
@@ -18,25 +16,72 @@ export default class Map extends React.Component {
 
     this.apiKey = 'AIzaSyCwddszOGNsmeumxZC24JkhvzM1nZogpk4';
     this.initMap = this.initMap.bind(this);
-    this.path = this.path.bind(this);
+    this.polylines = [];
   }
 
   componentDidMount() {
     window.initMap = this.initMap;
 
     const mapsScript = window.document.createElement('script');
-    mapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${this.apiKey}&callback=initMap`;
+    mapsScript.src = `https://maps.googleapis.com/maps/api/js?libraries=geometry&key=${this.apiKey}&callback=initMap`;
     mapsScript.async = true;
 
     window.document.body.appendChild(mapsScript);
   }
 
   componentDidUpdate() {
-    this.polyline.setPath(this.path());
+    this.polylines.forEach(polyline => polyline.setMap(null));
+    this.polylines = [];
+
+    if (this.props.history.length > 0) {
+      const last = this.props.history[this.props.history.length - 1];
+
+      this.map.panTo({
+        lat: last.lat,
+        lng: last.lng,
+      });
+    }
+
+    for (let i = 1/* not a mistake */; i < this.props.history.length; i += 1) {
+      const prevPoint = this.props.history[i - 1];
+      const prevLatLng = new google.maps.LatLng(
+        prevPoint.lat,
+        prevPoint.lng,
+      );
+
+      const curPoint = this.props.history[i];
+      const curLatLng = new google.maps.LatLng(
+        curPoint.lat,
+        curPoint.lng,
+      );
+
+      const distanceMiles = 0.000621371192 *
+        google.maps.geometry.spherical.computeDistanceBetween(prevLatLng, curLatLng);
+      const timeHours = (curPoint.time.getTime() - prevPoint.time.getTime())
+        / 1000 / 60 / 60;
+      const speed = distanceMiles / timeHours;
+
+      const color =
+        speed < 5.0 ? '#ff0000' :
+        speed < 10.0 ? '#ffff00' :
+        '#00ff00';
+
+      this.polylines.push(new google.maps.Polyline({
+        path: [
+          prevLatLng,
+          curLatLng,
+        ],
+        geodesic: true,
+        strokeColor: color,
+        strokeOpacity: 1.0,
+        strokeWeight: 1,
+        map: this.map,
+      }));
+    }
   }
 
   initMap() {
-    const map = new google.maps.Map(
+    this.map = new google.maps.Map(
       this.mapObj, {
         center: { lat: 38.8648, lng: -77.0380 },
         clickableIcons: false,
@@ -50,25 +95,9 @@ export default class Map extends React.Component {
     //   console.log(`{ lat: ${event.latLng.lat()}, lng: ${event.latLng.lng()} },`);
     // });
 
-    const bikeLayer = new google.maps.BicyclingLayer();
-    bikeLayer.setMap(map);
-
-    this.polyline = new google.maps.Polyline({
-      path: this.path(),
-      geodesic: true,
-      strokeColor: 'yellow',
-      strokeOpacity: 1.0,
-      strokeWeight: 1,
+    this.bicyclingLayer = new google.maps.BicyclingLayer({
+      map: this.map,
     });
-
-    this.polyline.setMap(map);
-  }
-
-  path() {
-    return this.props.history.map(item => ({
-      lat: item.latLng.lat,
-      lng: item.latLng.lng,
-    }));
   }
 
   render() {
