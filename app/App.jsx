@@ -1,9 +1,8 @@
 import React from 'react';
+import Map from './Map';
 
-export class App extends React.Component {
+export default class App extends React.Component {
   render() {
-    return (
-      <div />
-    );
+    return <Map />;
   }
 }
