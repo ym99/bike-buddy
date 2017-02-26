@@ -1,0 +1,48 @@
+{
+  "name": "word-learning",
+  "scripts": {
+    "build-dev": "webpack --config compiler/webpack.config.dev.js",
+    "build-prod": "set NODE_ENV=production & webpack --config compiler/webpack.config.prod.js",
+    "start": "node compiler/server.js"
+  },
+  "author": "ym99",
+  "license": "GNU-3",
+  "babel": {
+    "presets": [
+      "es2015",
+      "stage-0",
+      "react"
+    ],
+    "plugins": [
+      "transform-es2015-arrow-functions",
+      "transform-react-jsx"
+    ]
+  },
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-cli": "^6.22.2",
+    "babel-eslint": "^7.1.1",
+    "babel-loader": "^6.2.10",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-stage-0": "^6.22.0",
+    "eslint": "^3.14.1",
+    "eslint-config-airbnb": "^14.0.0",
+    "eslint-loader": "^1.6.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^3.0.2",
+    "eslint-plugin-react": "^6.9.0",
+    "express": "^4.14.0",
+    "html-loader": "^0.4.4",
+    "html-webpack-plugin": "^2.28.0",
+    "json-loader": "^0.5.4",
+    "react-jsx": "^1.0.0",
+    "webpack": "^1.14.0",
+    "webpack-dev-middleware": "^1.9.0",
+    "webpack-hot-middleware": "^2.15.0"
+  },
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-bootstrap": "^0.30.7",
+    "react-dom": "^15.4.2"
+  }
+}
