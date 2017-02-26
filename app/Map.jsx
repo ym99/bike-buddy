@@ -19,21 +19,42 @@ export default class Map extends React.Component {
   }
 
   initMap() {
-    this.mapObj = new google.maps.Map(
-      this.mapDomObj, {
-        center: {
-          lat: -34.397,
-          lng: 150.644,
-        },
-        scrollwheel: false,
-        zoom: 8,
+    const map = new google.maps.Map(
+      this.mapObj, {
+        center: { lat: 38.8648, lng: -77.0380 },
+        clickableIcons: false,
+        disableDefaultUI: true,
+        disableDoubleClickZoom: false,
+        draggable: false,
+        mapTypeId: google.maps.MapTypeId.SATELLITE,
+        scrollwheel: true,
+        zoom: 17,
       });
+
+    const bikeLayer = new google.maps.BicyclingLayer();
+    bikeLayer.setMap(map);
+
+    const points = [
+      { lat: 38.8648, lng: -77.0380 },
+      { lat: 38.7854, lng: -77.0630 },
+      { lat: 38.7293, lng: -77.1074 },
+    ];
+
+    const polyline = new google.maps.Polyline({
+      path: points,
+      geodesic: true,
+      strokeColor: 'yellow',
+      strokeOpacity: 1.0,
+      strokeWeight: 1,
+    });
+
+    polyline.setMap(map);
   }
 
   render() {
     return (
       <div
-        ref={(mapDomObj) => { this.mapDomObj = mapDomObj; }}
+        ref={(mapObj) => { this.mapObj = mapObj; }}
         style={({
           width: '100vw',
           height: '100vh',
