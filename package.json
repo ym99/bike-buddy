@@ -1,5 +1,7 @@
 {
   "name": "word-learning",
+  "version": "0.1.0",
+  "description": "Bike Buddy",
   "scripts": {
     "build-dev": "webpack --config compiler/webpack.config.dev.js",
     "build-prod": "set NODE_ENV=production & webpack --config compiler/webpack.config.prod.js",
