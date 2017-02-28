@@ -94,10 +94,6 @@ export default class Map extends React.Component {
         zoom: 17,
       });
 
-    // map.addListener('click', (event) => {
-    //   console.log(`{ lat: ${event.latLng.lat()}, lng: ${event.latLng.lng()} },`);
-    // });
-
     this.bicyclingLayer = new google.maps.BicyclingLayer({
       map: this.map,
     });
@@ -115,13 +111,15 @@ export default class Map extends React.Component {
 
   render() {
     return (
-      <div
-        ref={(mapObj) => { this.mapObj = mapObj; }}
-        style={({
-          width: '100vw',
-          height: '100vh',
-        })}
-      />
+      <div>
+        <div
+          ref={(mapObj) => { this.mapObj = mapObj; }}
+          style={({
+            width: '100vw',
+            height: '100vh',
+          })}
+        />
+      </div>
     );
   }
 }
