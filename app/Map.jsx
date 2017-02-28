@@ -33,14 +33,12 @@ export default class Map extends React.Component {
     this.polylines.forEach(polyline => polyline.setMap(null));
     this.polylines = [];
 
-    if (this.props.history.length > 0) {
-      const last = this.props.history[this.props.history.length - 1];
+    const last = this.props.history[this.props.history.length - 1];
 
-      this.map.panTo({
-        lat: last.lat,
-        lng: last.lng,
-      });
-    }
+    this.map.panTo({
+      lat: last.lat,
+      lng: last.lng,
+    });
 
     for (let i = 1/* not a mistake */; i < this.props.history.length; i += 1) {
       const prevPoint = this.props.history[i - 1];
@@ -81,9 +79,14 @@ export default class Map extends React.Component {
   }
 
   initMap() {
+    const last = this.props.history[this.props.history.length - 1];
+
     this.map = new google.maps.Map(
       this.mapObj, {
-        center: { lat: 38.8648, lng: -77.0380 },
+        center: {
+          lat: last.lat,
+          lng: last.lng,
+        },
         clickableIcons: false,
         disableDefaultUI: true,
         mapTypeId: google.maps.MapTypeId.SATELLITE,
@@ -97,6 +100,16 @@ export default class Map extends React.Component {
 
     this.bicyclingLayer = new google.maps.BicyclingLayer({
       map: this.map,
+    });
+
+    this.startMarker = new google.maps.Marker({
+      position: {
+        lat: last.lat,
+        lng: last.lng,
+      },
+      map: this.map,
+      title: 'Start',
+      label: 'S',
     });
   }
 

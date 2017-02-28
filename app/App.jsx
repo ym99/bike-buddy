@@ -1,6 +1,5 @@
 import React from 'react';
 import Map from './Map';
-import { testData } from './testData';
 
 export default class App extends React.Component {
 
@@ -13,35 +12,60 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    this.timerHandle = setInterval(() => {
-      if (testData.length > 0) {
-        this.setState((prevState) => {
-          const testItem = testData.splice(0, 1)[0];
-
-          const history = [...prevState.history];
-          history.push({
-            time: new Date(),
-            lat: testItem.lat,
-            lng: testItem.lng,
-          });
-
-          return {
-            history,
-          };
-        });
-      }
-    }, 1000);
+    this.componentDidUpdate();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.timerHandle);
+  componentDidUpdate() {
+    if (navigator.geolocation) {
+      setTimeout(() => {
+        navigator.geolocation.getCurrentPosition((position) => {
+          console.log(position);
+
+          this.setState((prevState) => {
+            const history = [...prevState.history];
+            history.push({
+              time: new Date(),
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+
+            return {
+              history,
+            };
+          });
+        });
+      }, 1000);
+    }
   }
 
   render() {
     return (
-      <Map
-        history={this.state.history}
-      />
+      <div
+        style={({
+          width: '100vw',
+          height: '100vh',
+        })}
+      >
+        {this.state.history.length === 0 &&
+          <div
+            style={({
+              position: 'fixed',
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: '1000',
+              textAlign: 'center',
+            })}
+          >
+            Waiting for GPS ...
+          </div>
+        }
+        {this.state.history.length > 0 &&
+          <Map
+            history={this.state.history}
+          />
+        }
+      </div>
     );
   }
 }
